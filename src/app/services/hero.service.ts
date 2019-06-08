@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { Hero } from '../hero';
 import { MessageService } from './messages.service';
@@ -25,7 +25,7 @@ export class HeroService {
   getHeroes(): Observable<Hero[]> {
     return this.http.get<Hero[]>(this.heroesUrl)
       .pipe(
-        tap(heroes => this.log('fetched heroes')),
+        tap(_ => this.log('fetched heroes')),
         catchError(this.handleError<Hero[]>('getHeroes', []))
       );
   }
@@ -52,7 +52,6 @@ export class HeroService {
     );
   }
 
-  /** DELETE: サーバーからヒーローを削除 */
   deleteHero(hero: Hero | number): Observable<Hero> {
     const id = typeof hero === 'number' ? hero : hero.id;
     const url = `${this.heroesUrl}/${id}`;
@@ -80,13 +79,11 @@ export class HeroService {
    * @param operation - 失敗した操作の名前
    * @param result - observableな結果として返す任意の値
    */
-  private handleError<T> (operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: リモート上のロギング基盤にエラーを送信する
       console.error(error); // かわりにconsoleに出力
 
-      // TODO: ユーザーへの開示のためにエラーの変換処理を改善する
       this.log(`${operation} failed: ${error.message}`);
 
       // 空の結果を返して、アプリを持続可能にする
